@@ -1,0 +1,410 @@
+@import "tailwindcss";
+
+/* Lenis' own stylesheet (its package exports don't expose the .css path). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Type system
+   Display: Sofia Sans Extra Condensed — tall, heavy, variable 100–900;
+            the hero title thickens as it resolves.
+   Accent:  Cormorant Garamond italic — one or two words per heading,
+            the romantic, handwritten voice against the poster type.
+   Text:    Hanken Grotesk.
+   Labels:  JetBrains Mono, small and tracked — the planner's notes.
+   Colours: the logo is white on black, so the ground is a warm black and
+   the light is ivory; champagne gold is the one accent, sampled from
+   candlelight and the gold-leaf confetti.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-display: "Sofia Sans Extra Condensed", "Arial Narrow", Impact, sans-serif;
+  --font-serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  --color-ink: #0a0908;
+  --color-coal: #14120f;
+  --color-soot: #1f1b16;
+  --color-bronze: #9a7442;
+  --color-gold: #c9a96e;
+  --color-glow: #f6ead0;
+  --color-ivory: #f4efe6;
+  --color-linen: #d2c9bb;
+  --color-ash: #918a7e;
+
+  --text-colossal: clamp(5rem, 17vw, 21rem);
+  --text-colossal--line-height: 0.8;
+  --text-colossal--letter-spacing: -0.012em;
+
+  --text-hero: clamp(3.4rem, 9.6vw, 10.5rem);
+  --text-hero--line-height: 0.84;
+  --text-hero--letter-spacing: -0.006em;
+
+  --text-display: clamp(2.9rem, 6.2vw, 6.75rem);
+  --text-display--line-height: 0.88;
+  --text-display--letter-spacing: -0.004em;
+
+  --text-title: clamp(1.9rem, 3.2vw, 3rem);
+  --text-title--line-height: 0.95;
+  --text-title--letter-spacing: 0;
+
+  --text-lead: clamp(1.0625rem, 1.35vw, 1.3125rem);
+  --text-lead--line-height: 1.55;
+  --text-lead--letter-spacing: -0.008em;
+
+  --text-body: clamp(1rem, 1vw, 1.0625rem);
+  --text-body--line-height: 1.7;
+  --text-body--letter-spacing: -0.004em;
+
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.16em;
+
+  --ease-carve: cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    background: var(--color-ink);
+  }
+  body {
+    margin: 0;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 1.5px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 999px;
+  }
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  a,
+  button,
+  summary,
+  select {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .h-screen-s {
+    height: 100svh;
+  }
+
+  /* Poster caps in the display face: weight set per use. */
+  .caps {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-kerning: normal;
+  }
+  /* The italic accent word inside a caps heading. */
+  .accent {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: -0.02em;
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+  }
+  /* Fine spaced caps in the text face: the quiet labels of an invitation. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+  }
+  /* Engraved serif caps for small titles. */
+  .engraved {
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+  }
+  /* Ivory fill for big display words: candlelight from the top-right. */
+  .fill-ivory {
+    background: linear-gradient(170deg, #fffcf6 0%, var(--color-ivory) 45%, #cfc2ad 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Champagne foil for accent words. */
+  .fill-gold {
+    background: linear-gradient(165deg, #f3e2b6 0%, var(--color-gold) 48%, #9a7442 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* An arch: a semicircle as wide as the box on top of a rectangle. The
+     huge radii are scaled down by the browser to exactly half the width. */
+  .arch {
+    border-radius: 9999px 9999px 0 0;
+  }
+
+  /* Smoked-glass pill, like candlelight through a veil. */
+  .smoke {
+    background: rgb(244 239 230 / 0.07);
+    backdrop-filter: blur(16px) saturate(1.25);
+    -webkit-backdrop-filter: blur(16px) saturate(1.25);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.16),
+      0 0 0 1px rgb(244 239 230 / 0.14),
+      0 18px 40px -18px rgb(0 0 0 / 0.7);
+  }
+
+  /* A mask line for letters that rise into place. */
+  .mask-line {
+    display: block;
+    overflow: hidden;
+    padding-block: 0.06em;
+    margin-block: -0.06em;
+  }
+
+  /* Italic letters overhang their box; give the mask room at the sides. */
+  .mask-italic {
+    padding-inline: 0.08em;
+    margin-inline: -0.08em;
+  }
+
+  /* Same, for single letters inside a line. */
+  .mask-inline {
+    display: inline-block;
+    overflow: hidden;
+    padding-block: 0.06em;
+    margin-block: -0.06em;
+  }
+
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    transition:
+      opacity 1.1s var(--ease-carve),
+      transform 1.1s var(--ease-carve);
+    transition-delay: var(--d, 0ms);
+  }
+  [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+  /* Rising from a mask: the child slides up out of its clipped line. */
+  [data-reveal="rise"] {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reveal="rise"] > * {
+    display: block;
+    transform: translate3d(0, 108%, 0);
+    transition: transform 1.2s var(--ease-carve);
+    transition-delay: var(--d, 0ms);
+  }
+  [data-reveal="rise"].is-in > * {
+    transform: none;
+  }
+  /* A photo uncovered from the bottom, like a veil being lifted. */
+  [data-reveal="unveil"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 1.4s var(--ease-carve);
+    transition-delay: var(--d, 0ms);
+  }
+  [data-reveal="unveil"].is-in {
+    clip-path: inset(0 0 0 0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal],
+    [data-reveal="rise"] > * {
+      transform: none !important;
+    }
+    [data-reveal="unveil"] {
+      clip-path: none;
+    }
+  }
+}
+
+/* Button with a light sweep, like candlelight catching satin. */
+.btn-sweep {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 20%, rgb(246 234 208 / 0.4) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.9s var(--ease-carve);
+}
+.btn-sweep:hover::after,
+.btn-sweep:focus-visible::after {
+  transform: translateX(120%);
+}
+
+/* FAQ / story disclosures: a hairline row with a plus that turns. */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .plus {
+  transform: rotate(45deg);
+}
+
+/* Form fields: hairline underline, gold when focused or filled in. */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgb(244 239 230 / 0.22);
+  border-radius: 0;
+  padding: 0.75rem 0;
+  min-height: 48px;
+  color: var(--color-ivory);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.4s var(--ease-carve);
+}
+.field:focus {
+  outline: none;
+  border-bottom-color: var(--color-gold);
+}
+.field[aria-invalid="true"] {
+  border-bottom-color: #e08b7a;
+}
+.field::placeholder {
+  color: rgb(145 138 126 / 0.7);
+}
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23c9a96e' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.25rem center;
+  background-size: 14px;
+  padding-right: 1.75rem;
+}
+select.field option {
+  background: var(--color-coal);
+  color: var(--color-ivory);
+}
+input[type="date"].field::-webkit-calendar-picker-indicator {
+  filter: invert(0.75) sepia(0.6) saturate(2) hue-rotate(5deg);
+}
+
+/* The arch settles in on load, before any scroll. */
+@keyframes arch-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6vh, 0) scale(1.04);
+    filter: blur(14px) brightness(0.4);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+@keyframes hint-drop {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+/* Letters of an inner page's title rising from their masks on load. */
+@keyframes letter-rise {
+  from {
+    transform: translate3d(0, 105%, 0);
+  }
+}
+.rise-in {
+  animation: letter-rise 1.2s var(--ease-carve) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40%, 0);
+  }
+}
+
+/* Film grain over the whole site — a 3-frame jitter so it feels like film. */
+.grain-overlay {
+  position: fixed;
+  inset: -50%;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.5s steps(3) infinite;
+}
+@keyframes grain {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(-3%, 2%, 0);
+  }
+  66% {
+    transform: translate3d(2%, -3%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay {
+    animation: none;
+  }
+}
