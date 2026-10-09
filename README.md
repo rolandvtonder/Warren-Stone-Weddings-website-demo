@@ -22,4 +22,4 @@ Vite + React + TypeScript, Tailwind CSS v4 and Lenis smooth scrolling. Every scr
 ## Notes
 
 - The enquiry form opens the visitor's email app with the enquiry written out; it needs a form service before going live.
-- Pushing to `main` rebuilds and redeploys the demo through GitHub Actions.
+- Pushing to `main` rebuilds the site with GitHub Actions and publishes it to the `gh-pages` branch, which GitHub Pages serves.
